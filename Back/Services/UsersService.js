@@ -1,5 +1,10 @@
 const UsersModel = require('../Models/UsersModel');
 
+const getUsers = async () => {
+  const allUsers = await UsersModel.getAllUsers();
+  return allUsers;
+}
+
 const treatUserFavs = async () => {
   const userFavs = await UsersModel.getUserFavs();
   let treatedFavs = [];
@@ -33,5 +38,6 @@ const treatUserFavs = async () => {
 }
 
 module.exports = {
+  getUsers,
   treatUserFavs,
 }

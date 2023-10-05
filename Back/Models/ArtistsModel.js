@@ -1,5 +1,10 @@
 const connection = require('./connection');
 
+const getAllArtists = async () => {
+  const [artists] = await connection.execute('SELECT * FROM Artist;');
+  return artists;
+}
+
 const getAllArtistsInfo = async () => {
   const [artistsInfo] = await connection.execute(`
     SELECT
@@ -21,5 +26,6 @@ const getAllArtistsInfo = async () => {
 }
 
 module.exports = {
+  getAllArtists,
   getAllArtistsInfo,
 }

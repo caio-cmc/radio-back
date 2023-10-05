@@ -1,5 +1,10 @@
 const ArtistsModel = require('../Models/ArtistsModel');
 
+const getAllArtists = async () => {
+  const allArtists = await ArtistsModel.getAllArtists();
+  return allArtists; 
+}
+
 const treatAllArtistsInfo = async () => {
   const allArtInfo = await ArtistsModel.getAllArtistsInfo();
   let treatedInfo = [];
@@ -48,5 +53,6 @@ const treatAllArtistsInfo = async () => {
 };
 
 module.exports = {
+  getAllArtists,
   treatAllArtistsInfo,
 }

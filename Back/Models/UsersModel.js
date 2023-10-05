@@ -1,5 +1,10 @@
 const connection = require('./connection');
 
+const getAllUsers = async () => {
+  const [allUsers] = await connection.execute('SELECT * FROM User;');
+  return allUsers;
+}
+
 const getUserFavs = async () => {
   const [userFavs] = await connection.execute(`
     SELECT
@@ -18,5 +23,6 @@ const getUserFavs = async () => {
 }
 
 module.exports = {
+  getAllUsers,
   getUserFavs,
 }
