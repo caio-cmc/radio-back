@@ -2,14 +2,36 @@ const ArtistsModel = require('../Models/ArtistsModel');
 
 const getAllArtists = async () => {
   const allArtists = await ArtistsModel.getAllArtists();
+  if (!allArtists) throw { status: 500, message: 'Internal server error' };
+
   return allArtists; 
 }
 
-const treatAllArtistsInfo = async () => {
-  const allArtInfo = await ArtistsModel.getAllArtistsInfo();
+const getArtistById = async (id) => {
+  const allArtists = await getAllArtists();
+  const artistExists = allArtists.some((a) => Number(a.Artist_id) === Number(id));
+  if (isNaN(id)) throw { status: 400, message: 'Id must be a number' };
+  if (!artistExists) throw { status: 404, message: 'Artist not found' };
+
+  const artist = await ArtistsModel.getArtistById(id);
+  return artist; 
+}
+
+const treatArtistsInfo = async (id) => {
+  let artInfo;
+  if (id) {
+    const allArtists = await getAllArtists();
+    const artistExists = allArtists.some((a) => Number(a.Artist_id) === Number(id));
+    if (isNaN(id)) throw { status: 400, message: 'Id must be a number' };
+    if (!artistExists) throw { status: 404, message: 'Artist not found' };
+
+    artInfo = await ArtistsModel.getArtistInfoById(id);
+  } else {
+    artInfo = await ArtistsModel.getAllArtistsInfo();
+  }
   let treatedInfo = [];
 
-  allArtInfo.forEach((art) => {
+  artInfo.forEach((art) => {
     const artExists = treatedInfo.some((i) => i.artist_id === art.id_artista);
     if (artExists) {
       const albExists = treatedInfo.some((i) => i.albums.some((a) => a.album_id === art.id_album));
@@ -54,5 +76,6 @@ const treatAllArtistsInfo = async () => {
 
 module.exports = {
   getAllArtists,
-  treatAllArtistsInfo,
+  getArtistById,
+  treatArtistsInfo,
 }

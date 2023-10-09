@@ -2,6 +2,8 @@ const UsersModel = require('../Models/UsersModel');
 
 const getUsers = async () => {
   const allUsers = await UsersModel.getAllUsers();
+  if (!allUsers) throw { status: 500, message: 'Internal server error' };
+
   return allUsers;
 }
 
@@ -57,11 +59,12 @@ const deleteVal = async (id) => {
 const treatUserFavs = async (id) => {
   let userFavs;
   if (id) {
-    userFavs = await UsersModel.getUserFavsById(id);
     const allUsers = await getUsers();
     const userExists = allUsers.some((u) => Number(u.User_id) === Number(id));
     if (isNaN(id)) throw { status: 400, message: 'Id must be a number' };
     if (!userExists) throw { status: 404, message: 'User not found' };
+    
+    userFavs = await UsersModel.getUserFavsById(id);
   } else {
     userFavs = await UsersModel.getUserFavs();
   }

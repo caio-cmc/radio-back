@@ -1,8 +1,12 @@
 const UsersService = require('../Services/UsersService');
 
 const getAllUsers = async (_req, res) => {
-  const allUsers = await UsersService.getUsers();
-  return res.status(200).json(allUsers);
+  try {
+    const allUsers = await UsersService.getUsers();
+    return res.status(200).json(allUsers);
+  } catch (err) {
+    return res.status(err.status).json({ error: err.message });
+  }
 };
 
 const getUser = async (req, res) => {
@@ -59,8 +63,12 @@ const deleteUser = async (req, res) => {
 }
 
 const getUserFavs = async (_req, res) => {
-  const treatedFavs = await UsersService.treatUserFavs();
-  return res.status(200).json(treatedFavs);
+  try {
+    const treatedFavs = await UsersService.treatUserFavs();
+    return res.status(200).json(treatedFavs);
+  } catch (err) {
+    return res.status(err.status).json({ error: err.message });
+  }
 };
 
 const getUserFavsById = async (req, res) => {
