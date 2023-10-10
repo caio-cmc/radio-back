@@ -34,8 +34,20 @@ const createNewAlbum = async (album, release, artId, genId) => {
   return newAlbum;
 }
 
+const updateAlbum = async (album, release, artId, genId, albId) => {
+  const [updatedAlbum] = await connection.execute('UPDATE Album SET Album_name = ?, Album_release = ?, Artist_id = ?, Genre_id = ? WHERE Album_id = ?;', [album, release, artId, genId, albId]);
+  return updatedAlbum;
+}
+
+const deleteAlbum = async (id) => {
+  const [deletedAlbum] = await connection.execute('DELETE FROM Album WHERE Album_id = ?;', [id]);
+  return deletedAlbum;
+}
+
 module.exports = {
   getAllAlbums,
   getAlbumById,
   createNewAlbum,
+  updateAlbum,
+  deleteAlbum
 }

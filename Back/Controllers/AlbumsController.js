@@ -37,8 +37,39 @@ const createAlbum = async (req, res) => {
   }
 }
 
+const updateAlbum = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { Album_name, Album_release, Artist_name, Genre_name } = req.body;
+    await AlbumsService.updateAlbumVal(Album_name, Album_release, Artist_name, Genre_name, id);
+    return res.status(200).json({
+      updated_album: {
+        Album_id: id,
+        Album_name,
+        Album_release,
+        Artist_name,
+        Genre_name
+      }
+    })
+  } catch (err) {
+    return res.status(err.status).json({ error: err.message });
+  }
+}
+
+const deleteAlbum = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await AlbumsService.deleteAlbumVal(id);
+    return res.status(204).end()
+  } catch (err) {
+    return res.status(err.status).json({ error: err.message });
+  }
+}
+
 module.exports = {
   getAllAlbums,
   getAlbum,
   createAlbum,
+  updateAlbum,
+  deleteAlbum
 }

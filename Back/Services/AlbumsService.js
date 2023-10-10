@@ -49,8 +49,37 @@ const newAlbumVal = async (album, release, artist, genre) => {
   return newAlbum;
 }
 
+const updateAlbumVal = async (album, release, artist, genre, id) => {
+  if (!album || !release || !artist || !genre || !id) throw { status: 400, message: 'All fields are required' };
+  const allAlbums = await getAllAlbums();
+  const allArtists = await ArtistsService.getAllArtists();
+  const allGenres = await GenresService.getGenres();
+  if (isNaN(id)) throw { status: 400, message: 'Id must be a number' };
+  const albExists = allAlbums.some((a) => Number(a.Album_id) === Number(id));
+  const [artExists] = allArtists.filter((a) => a.Artist_name === artist);
+  const [genExists] = allGenres.filter((g) => g.Genre_name === genre);
+  if (!albExists) throw { status: 404, message: 'Album not found' };
+  if (!artExists) throw { status: 404, message: 'Artist not found' };
+  if (!genExists) throw { status: 404, message: 'Genre not found' };
+
+  const updated = await AlbumsModel.updateAlbum(album, release, artExists.Artist_id, genExists.Genre_id, id);
+  return updated;
+}
+
+const deleteAlbumVal = async (id) => {
+  const allAlbums = await getAllAlbums();  
+  const albExists = allAlbums.some((a) => Number(a.Album_id) === Number(id));
+  if (isNaN(id)) throw { status: 400, message: 'Id must be a number' };
+  if (!albExists) throw { status: 404, message: 'Album not found' };
+
+  const deleted = await AlbumsModel.deleteAlbum(id);
+  return deleted;
+}
+
 module.exports = {
   getAllAlbums,
   getAlbumById,
   newAlbumVal,
+  updateAlbumVal,
+  deleteAlbumVal
 }
