@@ -23,7 +23,7 @@ const newArtistVal = async (artist, debut) => {
   if (!artist || !debut) throw { status: 400, message: 'Artist and debut are required' };
   if (artistExists) throw { status: 400, message: 'Artist already exists' };
 
-  const newArtist = ArtistsModel.createNewArtist(artist, debut);
+  const newArtist = await ArtistsModel.createNewArtist(artist, debut);
   return newArtist;
 }
 
@@ -85,7 +85,7 @@ const treatArtistsInfo = async (id) => {
           album_name: art.album,
           release_year: art.ano_de_estreia,
           genre: art.genero_musical,
-          musics: [ { music_id: art.id_musica, music_name: art.titulo_da_musica } ]
+          musics: ( art.id_musica === null ? [] : [ { music_id: art.id_musica, music_name: art.titulo_da_musica } ])
         })
       }
     } else {
