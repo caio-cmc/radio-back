@@ -35,7 +35,7 @@ const updateArtistVal = async (artist, debut, id) => {
 
   if (isNaN(id)) throw { status: 400, message: 'Id must be a number' };
   if (!artistExists) throw { status: 404, message: 'Artist not found' };
-  if (!artist || !debut || !id) throw { status: 400, message: 'Artist, debut an id are required' };
+  if (!artist || !debut || !id) throw { status: 400, message: 'Artist, debut and id are required' };
   if (sameArtist) throw { status: 400, message: 'Artist already exists' };
 
   const updatedArtist = await ArtistsModel.updateArtist(artist, debut, id);

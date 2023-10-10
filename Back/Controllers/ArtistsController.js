@@ -56,7 +56,7 @@ const deleteArtist = async (req, res) => {
   try {
     const { id } = req.params;
     await ArtistsService.deleteArtistVal(id);
-    return res.status(200).end();
+    return res.status(204).end();
   } catch (err) {
     return res.status(err.status).json({ error: err.message });
   }
