@@ -19,7 +19,27 @@ const getSong = async (req, res) => {
   }
 }
 
+const createSong = async (req, res) => {
+  try {
+    const { Music, Release, Album, Artist, Genre } = req.body;
+    const newSong = await MusicsService.newSongVal(Music, Release, Album, Artist, Genre);
+    return res.status(201).json({
+      new_music: {
+        Id: newSong.insertId,
+        Music,
+        Release,
+        Artist,
+        Album,
+        Genre
+      }
+    });
+  } catch (err) {
+    return res.status(err.status).json({ error: err.message });
+  }
+}
+
 module.exports = {
   getAllSongs,
   getSong,
+  createSong
 }

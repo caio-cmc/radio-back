@@ -47,7 +47,7 @@ const newAlbumVal = async (album, release, artist, genre) => {
   if (albumExists) throw { status: 400, message: 'Album already exists' };
 
   const newAlbum = await AlbumsModel.createNewAlbum(album, release, artId, genId);
-  return [newAlbum, artId, genId];
+  return newAlbum;
 }
 
 const updateAlbumVal = async (album, release, artist, genre, id) => {

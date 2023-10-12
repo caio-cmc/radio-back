@@ -22,7 +22,7 @@ const getAlbum = async (req, res) => {
 const createAlbum = async (req, res) => {
   try {
     const { Album_name, Album_release, Artist_name, Genre_name } = req.body;
-    const [newAlbum] = await AlbumsService.newAlbumVal(Album_name, Album_release, Artist_name, Genre_name);
+    const newAlbum = await AlbumsService.newAlbumVal(Album_name, Album_release, Artist_name, Genre_name);
     return res.status(201).json({
       new_album: {
         Album_id: newAlbum.insertId,
