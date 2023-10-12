@@ -12,7 +12,7 @@ const getAllGenres = async (_req, res) => {
 const getGenreById = async (req, res) => {
   try {
     const { id } = req.params;
-    const genre = await GenresService.genreVal(id);
+    const [genre] = await GenresService.genreVal(id);
     return res.status(200).json(genre);
   } catch (err) {
     return res.status(err.status).json({ error: err.message });

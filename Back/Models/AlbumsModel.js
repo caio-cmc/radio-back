@@ -44,10 +44,47 @@ const deleteAlbum = async (id) => {
   return deletedAlbum;
 }
 
+const getAllAlbumsInfo = async () => {
+  const [albumsInfo] = await connection.execute(`
+  SELECT
+    al.Album_id,
+    al.Album_name,
+    al.Album_release,
+    ar.Artist_name,
+    ge.Genre_name,
+    mu.Music_id,
+    mu.Music_name
+  FROM Album AS al
+  LEFT JOIN Artist AS ar ON ar.Artist_id = al.Artist_id
+  LEFT JOIN Genre AS ge ON ge.Genre_id = al.Genre_id
+  LEFT JOIN Music AS mu ON mu.Album_id = al.Album_id;`);
+  return albumsInfo;
+}
+
+const getAlbumInfoById = async (id) => {
+  const [albumInfo] = await connection.execute(`
+  SELECT
+    al.Album_id,
+    al.Album_name,
+    al.Album_release,
+    ar.Artist_name,
+    ge.Genre_name,
+    mu.Music_id,
+    mu.Music_name
+  FROM Album AS al
+  LEFT JOIN Artist AS ar ON ar.Artist_id = al.Artist_id
+  LEFT JOIN Genre AS ge ON ge.Genre_id = al.Genre_id
+  LEFT JOIN Music AS mu ON mu.Album_id = al.Album_id
+  WHERE al.Album_id = ?;`, [id]);
+  return albumInfo;
+}
+
 module.exports = {
   getAllAlbums,
   getAlbumById,
   createNewAlbum,
   updateAlbum,
-  deleteAlbum
+  deleteAlbum,
+  getAllAlbumsInfo,
+  getAlbumInfoById
 }

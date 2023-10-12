@@ -12,7 +12,7 @@ const getAllArtists = async (_req, res) => {
 const getArtist = async (req, res) => {
   try {
     const { id } = req.params;
-    const artist = await ArtistsService.getArtistById(id);
+    const [artist] = await ArtistsService.getArtistById(id);
     return res.status(200).json(artist);
   } catch (err) {
     return res.status(err.status).json({ error: err.message });
@@ -74,7 +74,7 @@ const getAllArtistsInfo = async (_req, res) => {
 const getArtistInfo = async (req, res) => {
   try {
     const { id } = req.params;
-    const artistInfo = await ArtistsService.treatArtistsInfo(id);
+    const [artistInfo] = await ArtistsService.treatArtistsInfo(id);
     return res.status(200).json(artistInfo);
   } catch (err) {
     return res.status(err.status).json({ error: err.message });

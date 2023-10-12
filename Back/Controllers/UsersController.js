@@ -12,7 +12,7 @@ const getAllUsers = async (_req, res) => {
 const getUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await UsersService.getUserById(id);
+    const [user] = await UsersService.getUserById(id);
     return res.status(200).json(user);
   } catch (err) {
     return res.status(err.status).json({ error: err.message });
@@ -74,7 +74,7 @@ const getUserFavs = async (_req, res) => {
 const getUserFavsById = async (req, res) => {
   try {
     const { id } = req.params;
-    const treatedFavs = await UsersService.treatUserFavs(id);
+    const [treatedFavs] = await UsersService.treatUserFavs(id);
     return res.status(200).json(treatedFavs);
   } catch (err) {
     return res.status(err.status).json({ error: err.message });

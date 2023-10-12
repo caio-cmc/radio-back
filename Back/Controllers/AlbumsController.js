@@ -12,7 +12,7 @@ const getAllAlbums = async (_req, res) => {
 const getAlbum = async (req, res) => {
   try {
     const { id } = req.params;
-    const album = await AlbumsService.getAlbumById(id);
+    const [album] = await AlbumsService.getAlbumById(id);
     return res.status(200).json(album);
   } catch (err) {
     return res.status(err.status).json({ error: err.message });
@@ -22,7 +22,7 @@ const getAlbum = async (req, res) => {
 const createAlbum = async (req, res) => {
   try {
     const { Album_name, Album_release, Artist_name, Genre_name } = req.body;
-    const newAlbum = await AlbumsService.newAlbumVal(Album_name, Album_release, Artist_name, Genre_name);
+    const [newAlbum] = await AlbumsService.newAlbumVal(Album_name, Album_release, Artist_name, Genre_name);
     return res.status(201).json({
       new_album: {
         Album_id: newAlbum.insertId,
@@ -66,10 +66,31 @@ const deleteAlbum = async (req, res) => {
   }
 }
 
+const getAllAlbumsInfo = async (_req, res) => {
+  try {
+    const allAlbumsInfo = await AlbumsService.treatAlbumsInfo();
+    return res.status(200).json(allAlbumsInfo);
+  } catch (err) {
+    return res.status(err.status).json({ error: err.message });
+  }
+}
+
+const getAlbumInfoById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const [albumInfo] = await AlbumsService.treatAlbumsInfo(id);
+    return res.status(200).json(albumInfo);
+  } catch (err) {
+    return res.status(err.status).json({ error: err.message });
+  }
+}
+
 module.exports = {
   getAllAlbums,
   getAlbum,
   createAlbum,
   updateAlbum,
-  deleteAlbum
+  deleteAlbum,
+  getAllAlbumsInfo,
+  getAlbumInfoById
 }

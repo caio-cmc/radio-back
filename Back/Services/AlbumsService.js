@@ -20,16 +20,13 @@ const getAlbumById = async (id) => {
 }
 
 const newAlbumVal = async (album, release, artist, genre) => {
-  const allAlbums = await getAllAlbums();
   const allArtists = await ArtistsService.getAllArtists();
   const allGenres = await GenresService.getGenres();
-  const albumExists = allAlbums.some((a) => a.Album_name === album);
   const [artistExists] = allArtists.filter((a) => a.Artist_name === artist);
   const [genreExists] = allGenres.filter((g) => g.Genre_name === genre);
   let artId;
   let genId;
   if (!album || !release || !artist || !genre) throw { status: 400, message: 'Album, release year, artist and genre are required' };
-  if (albumExists) throw { status: 400, message: 'Album already exists' };
 
   if (artistExists) {
     artId = artistExists.Artist_id;
@@ -45,8 +42,12 @@ const newAlbumVal = async (album, release, artist, genre) => {
     genId = newGen.insertId;
   }
 
+  const [albumsFromArtist] = await ArtistsService.treatArtistsInfo(artId);
+  const albumExists = albumsFromArtist.albums.some((a) => a.album_name === album);
+  if (albumExists) throw { status: 400, message: 'Album already exists' };
+
   const newAlbum = await AlbumsModel.createNewAlbum(album, release, artId, genId);
-  return newAlbum;
+  return [newAlbum, artId, genId];
 }
 
 const updateAlbumVal = async (album, release, artist, genre, id) => {
@@ -76,10 +77,52 @@ const deleteAlbumVal = async (id) => {
   return deleted;
 }
 
+const treatAlbumsInfo = async (id) => {
+  let albumInfo;
+  if (id) {
+    const allAlbums = await getAllAlbums();
+    const albumExists = allAlbums.some((a) => Number(a.Album_id) === Number(id));
+    if (isNaN(id)) throw { status: 400, message: 'Id must be a number' };
+    if (!albumExists) throw { status: 404, message: 'Album not found' };
+    
+    albumInfo = await AlbumsModel.getAlbumInfoById(id);
+  } else {
+    albumInfo = await AlbumsModel.getAllAlbumsInfo();
+  }
+  let treatedAlbums = [];
+
+  albumInfo.forEach((alb) => {
+    const exists = treatedAlbums.some((a) => Number(a.Id) === Number(alb.Album_id));
+    if (exists) {
+      let found = treatedAlbums.find((a) => Number(a.Id) === Number(alb.Album_id));
+      found.Musics.push({
+        Music_id: alb.Music_id,
+        Music: alb.Music_name
+      })
+    } else {
+      treatedAlbums.push({
+        Id: alb.Album_id,
+        Album: alb.Album_name,
+        Release: alb.Album_release,
+        Artist: alb.Artist_name,
+        Genre: alb.Genre_name,
+        Musics: ( alb.Music_name === null ? [] : [
+          {
+            Music_id: alb.Music_id,
+            Music: alb.Music_name
+          }
+        ])
+      })
+    }
+  })
+  return treatedAlbums;
+}
+
 module.exports = {
   getAllAlbums,
   getAlbumById,
   newAlbumVal,
   updateAlbumVal,
-  deleteAlbumVal
+  deleteAlbumVal,
+  treatAlbumsInfo
 }
