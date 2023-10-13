@@ -98,6 +98,17 @@ const addFavAlbum = async (req, res) => {
   }
 }
 
+const deleteFavAlbum = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { Album, Artist } = req.body;
+    await UsersService.deleteFavVal(id, Album, Artist);
+    return res.status(204).end();
+  } catch (err) {
+    return res.status(err.status).json({ error: err.message });
+  }
+}
+
 module.exports = {
   getAllUsers,
   getUser,
@@ -106,5 +117,6 @@ module.exports = {
   deleteUser,
   getUserFavs,
   getUserFavsById,
-  addFavAlbum
+  addFavAlbum,
+  deleteFavAlbum
 };

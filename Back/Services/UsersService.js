@@ -111,9 +111,24 @@ const newFavVal = async (userId, album, artist) => {
   const alreadyFav = userFavs.fav_albums.some((f) => f.album === album && f.artist === artist);
   if (alreadyFav) throw { status: 400, message: 'Album already a user favorite' };
 
-
   const newFav = await UsersModel.addFavAlbum(userId, albumExists.Album_id);
   return newFav;
+}
+
+const deleteFavVal = async (userId, album, artist) => {
+  if (!userId || !album || !artist) throw { status: 400, message: 'Album, artist and id are required' };
+  if (isNaN(userId)) throw { status: 400, message: 'Id must be a number' };
+  const allAlbums = await AlbumService.getAllAlbums();
+  const [albumExists] = allAlbums.filter((a) => a.Album_name === album && a.Artist_name === artist);
+  const [userExists] = await getUserById(userId);
+  if (!userExists) throw { status: 404, message: 'User not found' };
+  if (!albumExists) throw { status: 404, message: 'Album not found' };
+  const [userFavs] = await treatUserFavs(userId);
+  const alreadyFav = userFavs.fav_albums.some((f) => f.album === album && f.artist === artist);
+  if (!alreadyFav) throw { status: 404, message: 'Album is not a user favorite' };
+
+  const deleteFav = await UsersModel.deleteFavAlbum(userId, albumExists.Album_id);
+  return deleteFav;
 }
 
 module.exports = {
@@ -123,5 +138,6 @@ module.exports = {
   updateVal,
   deleteVal,
   treatUserFavs,
-  newFavVal
+  newFavVal,
+  deleteFavVal
 }

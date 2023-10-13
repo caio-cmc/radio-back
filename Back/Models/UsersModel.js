@@ -65,6 +65,11 @@ const addFavAlbum = async (userId, albumId) => {
   return newFav;
 }
 
+const deleteFavAlbum = async (userId, albumId) => {
+  const [deleteFav] = await connection.execute('DELETE FROM User_album WHERE User_id = ? AND Album_id = ?;', [userId, albumId]);
+  return deleteFav;
+}
+
 module.exports = {
   getAllUsers,
   getUserById,
@@ -73,5 +78,6 @@ module.exports = {
   deleteUser,
   getUserFavs,
   getUserFavsById,
-  addFavAlbum
+  addFavAlbum,
+  deleteFavAlbum
 }
