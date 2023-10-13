@@ -38,8 +38,20 @@ const createNewSong = async (song, albId, artId) => {
   return newSong;
 }
 
+const updateSong = async (song, albId, artId, id) => {
+  const [updatedSong] = await connection.execute('UPDATE Music SET Music_name = ?, Album_id = ?, Artist_id = ? WHERE Music_id = ?;', [song, albId, artId, id]);
+  return updatedSong;
+}
+
+const deleteSong = async (id) => {
+  const [deletedSong] = await connection.execute('DELETE FROM Music WHERE Music_id = ?', [id]);
+  return deletedSong;
+}
+
 module.exports = {
   getAllSongs,
   getSongById,
   createNewSong,
+  updateSong,
+  deleteSong
 }
