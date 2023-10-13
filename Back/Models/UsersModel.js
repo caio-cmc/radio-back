@@ -35,10 +35,10 @@ const getUserFavs = async () => {
       ge.Genre_name AS "genero_musical",
       al.Album_release AS "ano_de_estreia"
     FROM User AS us
-    JOIN User_album AS ua ON ua.User_id = us.User_id
-    JOIN Album AS al ON al.Album_id = ua.Album_id
-    JOIN Artist AS ar ON ar.Artist_id = al.Artist_id
-    JOIN Genre AS ge ON ge.Genre_id = al.Genre_id;`);
+    LEFT JOIN User_album AS ua ON ua.User_id = us.User_id
+    LEFT JOIN Album AS al ON al.Album_id = ua.Album_id
+    LEFT JOIN Artist AS ar ON ar.Artist_id = al.Artist_id
+    LEFT JOIN Genre AS ge ON ge.Genre_id = al.Genre_id;`);
   return userFavs;
 }
 
@@ -52,12 +52,17 @@ const getUserFavsById = async (id) => {
       ge.Genre_name AS "genero_musical",
       al.Album_release AS "ano_de_estreia"
     FROM User AS us
-    JOIN User_album AS ua ON ua.User_id = us.User_id
-    JOIN Album AS al ON al.Album_id = ua.Album_id
-    JOIN Artist AS ar ON ar.Artist_id = al.Artist_id
-    JOIN Genre AS ge ON ge.Genre_id = al.Genre_id
+    LEFT JOIN User_album AS ua ON ua.User_id = us.User_id
+    LEFT JOIN Album AS al ON al.Album_id = ua.Album_id
+    LEFT JOIN Artist AS ar ON ar.Artist_id = al.Artist_id
+    LEFT JOIN Genre AS ge ON ge.Genre_id = al.Genre_id
     WHERE us.User_id = ?;`, [id]);
   return userFavs;
+}
+
+const addFavAlbum = async (userId, albumId) => {
+  const [newFav] = await connection.execute('INSERT INTO User_album (User_id, Album_id) VALUES (?, ?);', [userId, albumId]);
+  return newFav;
 }
 
 module.exports = {
@@ -67,5 +72,6 @@ module.exports = {
   updateUser,
   deleteUser,
   getUserFavs,
-  getUserFavsById
+  getUserFavsById,
+  addFavAlbum
 }

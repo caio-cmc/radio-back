@@ -1,4 +1,5 @@
 const UsersModel = require('../Models/UsersModel');
+const AlbumService = require('./AlbumsService');
 
 const getUsers = async () => {
   const allUsers = await UsersModel.getAllUsers();
@@ -84,18 +85,35 @@ const treatUserFavs = async (id) => {
       treatedFavs.push({
         user_id: fav.id_usuario,
         user: fav.nome_de_usuario,
-        fav_albums: [
+        fav_albums: (fav.album === null ? [] : [
           {
             album: fav.album,
             artist: fav.artista,
             genre: fav.genero_musical,
             release: fav.ano_de_estreia
           }
-        ]
+        ])
       })
     }
   })
   return treatedFavs;
+}
+
+const newFavVal = async (userId, album, artist) => {
+  if (!userId || !album || !artist) throw { status: 400, message: 'Album, artist and id are required' };
+  if (isNaN(userId)) throw { status: 400, message: 'Id must be a number' };
+  const allAlbums = await AlbumService.getAllAlbums();
+  const [albumExists] = allAlbums.filter((a) => a.Album_name === album && a.Artist_name === artist);
+  const [userExists] = await getUserById(userId);
+  if (!userExists) throw { status: 404, message: 'User not found' };
+  if (!albumExists) throw { status: 404, message: 'Album not found' };
+  const [userFavs] = await treatUserFavs(userId);
+  const alreadyFav = userFavs.fav_albums.some((f) => f.album === album && f.artist === artist);
+  if (alreadyFav) throw { status: 400, message: 'Album already a user favorite' };
+
+
+  const newFav = await UsersModel.addFavAlbum(userId, albumExists.Album_id);
+  return newFav;
 }
 
 module.exports = {
@@ -105,4 +123,5 @@ module.exports = {
   updateVal,
   deleteVal,
   treatUserFavs,
+  newFavVal
 }
