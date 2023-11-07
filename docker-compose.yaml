@@ -1,0 +1,9 @@
+version: '3'
+services:
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: MyRadio
+    ports:
+      - 5505:3306
